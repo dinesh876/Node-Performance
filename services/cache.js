@@ -22,16 +22,13 @@ mongoose.Query.prototype.exec = async function() {
      }));
      
      //See if we have value for 'key' in reddis
-     console.log(key)
      const cacheValue = await client.hget(this.hashKey,key)
-     console.log(cacheValue)
      
 
      //If we do, return that
       if(cacheValue) {
-           console.log("dinesh");
+           console.log("With cache");
            const doc =JSON.parse(cacheValue);      
-           console.log(doc)
            
 
            return Array.isArray(doc) 
@@ -43,4 +40,10 @@ mongoose.Query.prototype.exec = async function() {
      const result =await exec.apply(this,arguments);
      client.hmset(this.hashKey,key, JSON.stringify(result),'EX',10);
      return result;
+}
+
+module.exports ={
+       clearHash(hashKey){
+              client.del(JSON.stringify(hashKey))
+       }
 }
